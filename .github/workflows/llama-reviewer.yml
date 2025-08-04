@@ -1,4 +1,4 @@
-name: PR Agent (Local Runner)
+name: PR Agent (Local Composite)
 
 on:
   pull_request:
@@ -7,10 +7,11 @@ on:
 
 jobs:
   review:
-    runs-on: [my-mac]
+    runs-on: [self-hosted, my-mac]
     steps:
-      - uses: qodo-ai/pr-agent@v0.30
+      - name: Run Local PR Agent
+        uses: ./.github/actions/pr-agent-local
         env:
-          GITHUB_TOKEN: ${{ secrets.NEW_GITHUB_TOKEN }}
-          CONFIG.model: "ollama/codellama:13b-instruct"
+          GITHUB_TOKEN: ${{ secrets.NEW_GIT_TOKEN }}
+          CONFIG__MODEL: "ollama/codellama:13b-instruct"
           OLLAMA__API_BASE: "http://localhost:11434"
