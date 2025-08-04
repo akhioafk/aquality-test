@@ -23,4 +23,4 @@ runs:
         export CONFIG__MODEL="${{ env.CONFIG__MODEL }}"
         export OLLAMA__API_BASE="${{ env.OLLAMA__API_BASE }}"
         export GITHUB_TOKEN="${{ env.NEW_GIT_TOKEN }}"
-        "$HOME/Library/Python/3.10/bin/pr-agent" run
+        "$HOME/Library/Python/3.10/bin/pr-agent" --pr_url="${{ github.event.pull_request.html_url }}" review
