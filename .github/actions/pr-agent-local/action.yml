@@ -14,8 +14,8 @@ runs:
     - name: Install PR Agent
       shell: bash
       run: |
-        pip3 install --upgrade pip
         pip3 install "pr-agent[ollama]"
+        echo "$HOME/Library/Python/3.10/bin" >> $GITHUB_PATH
 
     - name: Run PR Agent
       shell: bash
