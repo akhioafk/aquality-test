@@ -6,7 +6,7 @@ on:
 
 jobs:
   review:
-    runs-on: [self-hosted, macOS, ARM64]
+    runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: write
@@ -15,4 +15,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
           CONFIG.model: "ollama/codellama:13b-instruct"
-          OLLAMA__API_BASE: "http://localhost:11434"
+          OLLAMA__API_BASE: "http://86.57.158.99:11434"
