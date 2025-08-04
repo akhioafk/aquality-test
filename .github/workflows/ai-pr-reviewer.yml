@@ -20,15 +20,14 @@ jobs:
   review:
     runs-on: [self-hosted, macOS, ARM64]  
     steps:
-      - uses: coderabbitai/ai-pr-reviewer@latest
+      - uses: akhioafk/ai-pr-reviewer-aqua
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ollama            # any word
         with:
           debug: false
-          diffOnly: true
           openai_base_url: "http://localhost:11434/v1"
           openai_light_model: "deepseek-coder-v2:16b-lite-instruct-q4_K_M"
           openai_heavy_model: "deepseek-coder-v2:16b-lite-instruct-q4_K_M"
-          review_simple_changes: true
+          review_simple_changes: false
           review_comment_lgtm: false
