@@ -23,4 +23,5 @@ runs:
         export CONFIG__MODEL="${{ env.CONFIG__MODEL }}"
         export OLLAMA__API_BASE="${{ env.OLLAMA__API_BASE }}"
         export GITHUB_TOKEN="${{ env.NEW_GIT_TOKEN }}"
+        export PYTHONPATH="$HOME/Library/Python/3.10/lib/python/site-packages:$PYTHONPATH"
         python3 -m pr_agent.run
