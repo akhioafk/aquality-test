@@ -9,6 +9,9 @@ jobs:
   review:
     runs-on: [self-hosted, my-mac]
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Run Local PR Agent
         uses: ./.github/actions/pr-agent-local
         env:
