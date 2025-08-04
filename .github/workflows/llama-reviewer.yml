@@ -13,6 +13,6 @@ jobs:
     steps:
       - uses: qodo-ai/pr-agent@v0.30
         env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PR_AGENT_PAT }}
           CONFIG.model: "ollama/codellama:13b-instruct"
           OLLAMA__API_BASE: "http://86.57.158.99:11434"
