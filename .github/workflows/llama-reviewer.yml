@@ -11,8 +11,13 @@ jobs:
       pull-requests: write
       contents: write
     steps:
+      - name: Can we reach Ollama?
+        run: |
+          curl -v --max-time 10 "$http://86.57.158.99:11434/api/tags" || true
+        env:
+          OLLAMA_API_BASE: ${{ env.PR_AGENT_PAT }}
       - uses: qodo-ai/pr-agent@v0.30
         env:
           GITHUB_TOKEN: ${{ secrets.PR_AGENT_PAT }}
-          CONFIG.model: "deepseek-coder-v2:16b-lite-instruct-q4_K_M"
+          CONFIG__MODEL: "codellama/deepseek-coder-v2:16b-lite-instruct-q4_K_M"
           OLLAMA__API_BASE: "http://86.57.158.99:11434"
