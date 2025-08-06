@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: LLM Code Review
-        uses: miroco/llm-code-review-action@v2
+        uses: luiyen/llm-code-review@v1.0.1
         env:
           OLLAMA_API_URL: "http://localhost:11434/api"
           MODEL: "codellama:13b-instruct"
