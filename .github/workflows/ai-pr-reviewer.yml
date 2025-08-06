@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: akhioafk/ai-pr-reviewer-aqua@main
         env:
-          GITHUB_TOKEN: ${{ secrets.PR_AGENT_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
           OPENAI_API_KEY: ollama            # any word
         with:
           debug: false
@@ -31,6 +31,3 @@ jobs:
           openai_heavy_model: "codellama:13b-instruct"
           review_simple_changes: false
           review_comment_lgtm: false
-          inline_suggestions: false
-          openai_model_temperature: 0
-
