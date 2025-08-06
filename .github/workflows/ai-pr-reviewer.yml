@@ -20,7 +20,7 @@ jobs:
   review:
     runs-on: [self-hosted, macOS, ARM64]  
     steps:
-      - uses: coderabbitai/ap-pr-reviewer
+      - uses: akhioafk/ai-pr-reviewer-aqua@main
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
           OPENAI_API_KEY: ollama            # any word

@@ -1,18 +1,18 @@
-name: PR Agent (Local LLM)
-on:
-  pull_request:
-    types: [opened, reopened, ready_for_review]
-  issue_comment:
+# name: PR Agent (Local LLM)
+# on:
+#   pull_request:
+#     types: [opened, reopened, ready_for_review]
+#   issue_comment:
 
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
-    steps:
-      - uses: qodo-ai/pr-agent@v0.30
-        env:
-          GITHUB_TOKEN: ${{ secrets.PR_AGENT_PAT }}
-          CONFIG.model: "ollama/codellama:13b-instruct"
-          OLLAMA__API_BASE: "http://86.57.158.99:11434"
+# jobs:
+#   review:
+#     runs-on: ubuntu-latest
+#     permissions:
+#       pull-requests: write
+#       contents: write
+#     steps:
+#       - uses: qodo-ai/pr-agent@v0.30
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.PR_AGENT_PAT }}
+#           CONFIG.model: "ollama/codellama:13b-instruct"
+#           OLLAMA__API_BASE: "http://86.57.158.99:11434"
