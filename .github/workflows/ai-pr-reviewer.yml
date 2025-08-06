@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: akhioafk/ai-pr-reviewer-aqua@main
         env:
-          GITHUB_TOKEN: ${{ secrets.NEW_GIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PR_AGENT_PAT }}
           OPENAI_API_KEY: ollama            # any word
         with:
           debug: false
