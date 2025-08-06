@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
 
       - name: AI PR Reviewer
-        uses: akhioafk/ai-pr-reviewer-aqua@main
+        uses: coderabbitai/ai-pr-reviewer@1.16.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ollama
