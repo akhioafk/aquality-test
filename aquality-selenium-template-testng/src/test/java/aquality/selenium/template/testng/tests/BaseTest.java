@@ -47,7 +47,7 @@ public class BaseTest {
         browser.waitForPageToLoad();
     }
 
-    @AfterMethod
+    @AfterMet
     public void cleanUp(ITestContext context) {
         if (AqualityServices.isBrowserStarted()) {
             Allure.addAttachment("page source", "text/html",
@@ -58,3 +58,13 @@ public class BaseTest {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+erugopehrgopheprog
