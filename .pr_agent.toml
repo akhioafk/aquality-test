@@ -1,0 +1,7 @@
+[llm_provider]
+name      = "custom"
+api_base  = "http://localhost:11434/api"
+model     = "codellama:13b-instruct"
+
+[github_app]
+pr_commands  = ["/review", "/improve"]
