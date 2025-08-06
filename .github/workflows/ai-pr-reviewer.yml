@@ -31,3 +31,6 @@ jobs:
           openai_heavy_model: "codellama:13b-instruct"
           review_simple_changes: false
           review_comment_lgtm: false
+          inline_suggestions: false
+          openai_model_temperature: 0
+
