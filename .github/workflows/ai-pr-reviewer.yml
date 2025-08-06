@@ -27,7 +27,7 @@ jobs:
         with:
           debug: false
           openai_base_url: "http://localhost:11434/v1"
-          openai_light_model: "ollama/codellama:13b-instruct"
-          openai_heavy_model: "ollama/codellama:13b-instruct"
+          openai_light_model: "codellama:13b-instruct"
+          openai_heavy_model: "codellama:13b-instruct"
           review_simple_changes: false
           review_comment_lgtm: false
