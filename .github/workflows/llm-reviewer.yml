@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: LLM Code Review
-        uses: akhioafk/llm-code-review
+        uses: akhioafk/llm-code-review@v1.0.0
         env:
           OLLAMA_API_URL: "http://localhost:11434/api"
           MODEL: "codellama:13b-instruct"
