@@ -7,18 +7,7 @@ import io.cucumber.java.Before;
 public class AqualityServicesHooks {
 
     @Before(order = 0)
-    public void reinitialityServices() {
+    public void reinitializeAqualityServices() {
         AqualityServices.initInjector(new CustomBrowserModule());
     }
 }
-
-
-
-
-
-
-
-
-
-
-////weitbgilwerhiopghpwir
