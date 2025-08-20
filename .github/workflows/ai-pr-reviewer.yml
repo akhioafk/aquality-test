@@ -29,6 +29,7 @@ jobs:
           debug: false
           review_simple_changes: false
           review_comment_lgtm: false
+          openai_light_model: 'codellama:13b-instruct'
           openai_heavy_model: 'codellama:13b-instruct'
           openai_model_temperature: '0.05'
           openai_retries: '25'
