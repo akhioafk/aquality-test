@@ -8,6 +8,6 @@ public class AqualityServicesHooks {
 
     @Before(order = 0)
     public void reinitializeAqualityServices() {
-        AqualityServices.initInjector(new CustomBrowserModule());
+        AqualityServices.initInjector(new CustomBrowserModule(AqualityServices::getBrowser));
     }
 }
