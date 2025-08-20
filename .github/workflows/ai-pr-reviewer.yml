@@ -60,14 +60,4 @@ jobs:
             special tools and frameworks are used, like RestAssured,
             Selenium WebDriver and TestNG. These tools may already 
             include some core validations inside. 
-            Always reply in JSON in the following format:
-            {
-              "comments": [
-                {"file": "<filename>", "line": <line_number>, "comment": "<your review>"}
-              ]
-            }
-            You will be given unified diff hunks. 
-            Always place comments on the exact line number from the diff header ("@@ -a,b +c,d @@"). 
-            The "line" must refer to the right-hand side (new code) line number.
-
           
