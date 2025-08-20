@@ -28,7 +28,6 @@ jobs:
           openai_base_url: "http://localhost:11434/v1"
           debug: false
           review_simple_changes: true
-          review_inline: true
           review_comment_lgtm: false
           openai_light_model: 'qwen2.5-coder:32b'
           openai_heavy_model: 'qwen2.5-coder:32b'
