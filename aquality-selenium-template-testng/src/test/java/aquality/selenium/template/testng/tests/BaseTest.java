@@ -57,4 +57,18 @@ public class BaseTest {
             browser.quit();
         }
     }
+
+    public LandingSteps getLandingSteps() {
+        return landingSteps;
+    }
 }
+
+
+
+
+
+
+
+
+
+///qweorugu9qwerhiou
