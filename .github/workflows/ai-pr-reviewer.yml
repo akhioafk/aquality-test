@@ -30,8 +30,8 @@ jobs:
           review_simple_changes: true
           review_inline: true
           review_comment_lgtm: false
-          openai_light_model: 'codellama:13b-instruct'
-          openai_heavy_model: 'codellama:13b-instruct'
+          openai_light_model: 'qwen2.5-coder:32b'
+          openai_heavy_model: 'qwen2.5-coder:32b'
           openai_model_temperature: '0.05'
           openai_retries: '25'
           openai_concurrency_limit: '3'
