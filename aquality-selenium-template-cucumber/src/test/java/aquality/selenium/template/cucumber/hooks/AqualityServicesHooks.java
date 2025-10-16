@@ -10,4 +10,9 @@ public class AqualityServicesHooks {
     public void reinitializeAqualityServices() {
         AqualityServices.initInjector(new CustomBrowserModule());
     }
+
+    @After(order = 0)
+    public void cleanUpAqualityServices() {
+        AqualityServices.dispose();
+    }
 }
