@@ -1,0 +1,185 @@
+name: Start PRonto review
+
+on:
+    pull_request:
+      #some of these triggers are optional, evaluate which one make sense for your team. 
+      types: [opened, synchronize, reopened, labeled, ready_for_review]
+
+#this part avoid multiple reviews form running at same time, if for example, you made multiple commits or labeled in sequence of a commit.
+#it creates an identifier from the WorkflowName + PR number, and cancel other workflows with same ID.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+jobs:
+    send-to-review:
+        runs-on: ubuntu-latest
+        #checking if our criterias are met for a review.
+        #if our global variable equals true AND is not draft. We also added an optional repository variable to enable reviews in draft PRs
+        #for last, if we are on draft but there's a tag 'vertex-force-review', it reviews.
+        if: vars.VERTEX_REVIEW_ENABLED == 'true' && (github.event.pull_request.draft == false || (github.event.pull_request.draft == true && vars.VERTEX_REVIEWS_DRAFTS == 'true') || contains(github.event.pull_request.labels.*.name, 'vertex-force-review'))
+        env:
+        #define all env variables in advance, makes the action cleaner.
+           LABEL_NAMES: ${{ join(github.event.pull_request.labels.*.name, ' ') }}
+           PR_TITLE: "${{ github.event.pull_request.title }}"
+           PR_BODY: "${{ github.event.pull_request.body }}"
+           BASE_SHA: "${{ github.event.pull_request.base.sha }}"
+           BASE_REF: "${{ github.event.pull_request.base.ref }}"
+           HEAD_SHA: "${{ github.event.pull_request.head.sha }}"
+           HEAD_REF: "${{ github.event.pull_request.head.ref }}"
+           PR_NUMBER: "${{ github.event.pull_request.number }}"
+           FILES_TO_REVIEW: "${{ vars.VERTEX_EXTENSIONS_TO_REVIEW }}"
+
+        steps:
+        #simple checkout
+        - name: Checkout code
+          uses: actions/checkout@v4
+        
+        #this is an optimized repository fetch for the purpose of this workflow, it fetchs recursively until a common ancestor to make the git diff is found.
+        - name: Incremental fetch base and head branches
+          uses: ProductMadness/ci-shared-ghactions/cashman-casino/incremental-fetch@v2.42.0
+          with:
+            BASE_REF: ${{ env.BASE_REF }}
+            HEAD_REF: ${{ env.HEAD_REF }}
+            BASE_SHA: ${{ env.BASE_SHA }}
+            HEAD_SHA: ${{ env.HEAD_SHA }}
+            FETCH_LIMIT: 300
+
+        #simple regex to extract the jira ticket ID from PR title. Cashman follows strict rules, so it's easy to extract it.
+        - name: Extract Jira ticket from PR title
+          id: extract_jira_ticket
+          uses: actions/github-script@v7
+          with:
+            script: |
+              const title = process.env.PR_TITLE;
+
+              if (!title) {
+                core.setFailed("PR title not found in context.");
+                return;
+              }
+
+              const match = title.match(/\(([A-Z]+-\d+)\)/);
+
+              if (match) {
+                const jiraId = match[1];
+                core.info(`Jira Ticket: ${jiraId}`);
+                core.setOutput("JIRA_ID", jiraId);
+              } else {
+                core.setFailed("No Jira ID found in PR title.");
+              }
+
+        #this is optional, but we added possibility of alternative Gemini Models by custom labels on the PR.
+        #also, the default model is defined in repository variable, for customization without pushes on the repository.
+        - name: Define Gemini Model to use
+          id: define_gemini_model
+          uses: actions/github-script@v7
+          env:
+            DEFAULT_MODEL: "${{ vars.VERTEX_MODEL_ID }}"
+          with:
+            script: |
+              const defaultModel = process.env.DEFAULT_MODEL;
+              const labelNames = process.env.LABEL_NAMES.split(/\s+/);
+
+              const pattern = /^vertex-model-(.+)$/;
+
+              for (const label of labelNames) {
+                const match = label.match(pattern);
+                if (match) {
+                  const modelId = match[1];
+                  console.log(`Found model to override: ${modelId}`);
+                  core.setOutput('MODEL_ID', modelId);
+                  return;
+                }
+              }
+
+              console.log(`Using default gemini model: ${defaultModel}`);
+              core.setOutput('MODEL_ID', defaultModel);
+
+        #this step finds the last review made by "AUTHOR" and output the commit SHA, to facilitate the partial review.
+        - name: Get latest review by github-actions[bot]
+          id: get_last_review
+          uses: ProductMadness/ci-shared-ghactions/cashman-casino/find-last-review-sha@v2.42.0
+          with:
+            PR_NUMBER: ${{ env.PR_NUMBER }}
+            AUTHOR: "github-actions[bot]"
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+        #workflow to fetch Jira summary + description, to make checks against acceptance criterias.
+        - name: Fetch Jira Ticket Info
+          id: fetch_jira_ticket
+          uses: ProductMadness/ci-shared-ghactions/cashman-casino/get-jira-description@v2.42.0
+          with:
+            JIRA_HOST: ${{ vars.JIRA_HOST }}
+            JIRA_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+            TICKET_ID: ${{ steps.extract_jira_ticket.outputs.JIRA_ID }}
+
+        #on our prompt build step, we basically combine all our grounding data, using XML tags so AI understand each context better.
+        - name: Build Prompt
+          id: build_prompt
+          uses: actions/github-script@v7
+          env:
+            JIRA_SUMMARY: "${{ steps.fetch_jira_ticket.outputs.SUMMARY }}"
+            JIRA_DESCRIPTION: "${{ steps.fetch_jira_ticket.outputs.DESCRIPTION }}"
+          with:
+            script: |
+              const fs = require('fs');
+              const { execSync } = require('child_process');
+
+              const rulesFile = ".github/vertex-review-data/code-rules.txt";
+              const promptFile = ".github/vertex-review-data/prompt.txt";
+
+              const jiraSummary = process.env.JIRA_SUMMARY || "";
+              const jiraDescription = process.env.JIRA_DESCRIPTION || "";
+              const prBody = process.env.PR_BODY || "";
+              const baseSha = process.env.BASE_SHA;
+              const headSha = process.env.HEAD_SHA;
+              const filesToReview = process.env.FILES_TO_REVIEW;
+
+              let content = fs.readFileSync(promptFile, "utf8") + "\n";
+
+              content += "<Jira Ticket Description>\n";
+              content += `${jiraSummary}\n`;
+              content += `${jiraDescription}\n`;
+              content += "</Jira Ticket Description>\n\n";
+
+              content += "<PR Description>\n";
+              content += `${prBody}\n`;
+              content += "</PR Description>\n\n";
+
+              content += "<Rule Set>\n";
+              content += fs.readFileSync(rulesFile, "utf8") + "\n";
+              content += "</Rule Set>\n\n";
+
+              fs.writeFileSync("prompt.txt", content);
+        
+        #upload the prompt we created on previous step. Keep these names, as the code reviewer will look specifically for it.
+        - name: Upload prompt as artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: "prompt-${{ github.run_id }}"
+            path: prompt.txt
+        
+        #simple google OAuth2 authentication, to be able to make REST calls to Vertex
+        - name: Authenticate OAuth2
+          id: authenticate_oauth2
+          uses: ProductMadness/ci-shared-ghactions/cashman-casino/authenticate-oauth2@v2.42.0
+          with:
+            PRIVATE_KEY: ${{ secrets.VERTEX_AI_KEY }} #contact AI team for this key, and store safely
+            CLIENT_EMAIL: ${{ secrets.VERTEX_SERVICE_ACCOUNT }} #contact AI team for this email, and store safely
+            TOKEN_URI: "https://oauth2.googleapis.com/token"
+            SCOPE: "https://www.googleapis.com/auth/cloud-platform"
+        
+        #the main workflow that will make the code review and handle comments on the PR.
+        - name: Start PRonto review
+          uses: ProductMadness/ci-shared-ghactions/cashman-casino/pronto-code-reviewer@v2.42.0
+          with:
+            VERTEX_TOKEN: ${{ steps.authenticate_oauth2.outputs.ACCESS_TOKEN }}
+            VERTEX_PROJECT_ID: ${{ vars.VERTEX_PROJECT_ID }}
+            FILES_TO_REVIEW: ${{ env.FILES_TO_REVIEW }}
+            MODEL_ID: ${{ steps.define_gemini_model.outputs.MODEL_ID }}
+            HEAD_SHA: ${{ env.HEAD_SHA }}
+            BASE_SHA: ${{ env.BASE_SHA }}
+            HAS_LAST_REVIEW: ${{ steps.get_last_review.outputs.HAS_REVIEW }}
+            LAST_REVIEW_SHA: ${{ steps.get_last_review.outputs.LAST_REVIEW_SHA }}
+            MAX_TOKENS_ALLOWED: "1000000" #1_000_000
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

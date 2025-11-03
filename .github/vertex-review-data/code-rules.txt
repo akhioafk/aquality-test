@@ -1,0 +1,865 @@
+
+
+Ruleset for validation against code diffs, to bring code to high standart !
+
+
+---
+ Naming Conventions
+
+1.  Rule: Use Specific and Descriptive Names
+    Explanation: Class, method, and variable names should clearly and concisely describe their purpose or intent. Avoid overly generic or ambiguous names that require the reader to infer meaning from the implementation.
+    Example:
+    
+    // Good: Name clearly indicates the purpose
+    public class BattlePassAssetService { /* ... */ }
+    public void UpdateProgressBar(BattlePassProgress progress) { /* ... */ }
+    
+    Example (Bad):
+    
+    // Bad: "Handler" and "Update" are too generic
+    public class DataHandler { /* ... */ }
+    public void Update(object data) { /* ... */ }
+    
+
+2.  Rule: Maintain Naming Consistency Across the Project
+    Explanation: Follow established naming patterns for similar components and assets. This includes class names (e.g., 'FeatureTests'), localization keys (e.g., PascalCase vs. snake_case), and asset file names. Consistency makes the codebase easier to navigate and understand.
+    Example:
+    
+    // Good: Follows existing patterns
+    public class FstWebSocketServiceTests { /* ... */ } // Matches GtaWebSocketServiceTests
+    public const string PurchaseFailedTitle = "PurchaseFailed_Title"; // Matches other keys
+    // Asset name: LightningLink_Particle_System.prefab
+    
+
+3.  Rule: Interface Naming
+    Explanation: Interfaces must start with the letter 'I' followed by a name in PascalCase. This clearly distinguishes interfaces from concrete classes.
+    Example:
+    
+    public interface IDiskUsage { /* ... */ }
+    public interface IExternalNavigationService { /* ... */ }
+    
+
+4.  Rule: Class, Struct, and Enum Naming
+    Explanation: Use PascalCase for class, struct, and enum type names.
+    Example:
+    
+    public class CoreMvpInstaller { /* ... */ }
+    public enum WebsocketStatus { Connecting, Connected }
+    
+
+5.  Rule: Enum Member Naming
+    Explanation: Use PascalCase for enum members.
+    Example:
+    
+    public enum FeatureOpenLocation
+    {
+        Undefined,
+        GameScreen,
+        Crm
+    }
+    
+
+6.  Rule: Method Naming
+    Explanation: Use PascalCase for all methods (public, protected, internal, private).
+    Example:
+    
+    protected override void BindCommon() { /* ... */ }
+    private void AddFeatureInstallers() { /* ... */ }
+    
+
+7.  Rule: Property Naming
+    Explanation: Use PascalCase for properties.
+    Example:
+    
+    public bool IsInstalledOnExternalStorage { get; }
+    public string Location { get; set; }
+    
+
+8.  Rule: Event Naming
+    Explanation: Use PascalCase for events. Often, they imply a past action (e.g., 'Clicked', 'Updated') or a state change (e.g., 'FocusChanged').
+    Example:
+    
+    public event Action ErrorQueued;
+    public event Action<bool> ReachabilityChanged;
+    
+
+9.  Rule: Event Handler Naming
+    Explanation: Event handler methods should typically be named 'OnEventName' or 'HandleEventName' and use PascalCase.
+    Example:
+    
+    private void OnReachabilityChanged(bool isNetworkReachable) { /* ... */ }
+    private void OnFocusChanged(IViewLayerInfo layer) { /* ... */ }
+    
+
+10. Rule: Private Instance Field Naming
+    Explanation: Use an underscore '_' prefix followed by camelCase for private instance fields. This helps distinguish instance fields from local variables and applies to all private fields, including those marked with '[SerializeField]'.
+    Example:
+    
+    private readonly IPresenterBinder _presenterBinder;
+    private readonly Queue<Error> _queue = new();
+    [SerializeField]
+    private CashmanButton _submitButton; // Still uses a '_' prefix
+    
+
+11. Rule: Constant Field Naming
+    Explanation: Use PascalCase for 'const' and 'static readonly' string fields. If a general constant (e.g., for numbers used across multiple places), consider ALL_CAPS_SNAKE_CASE if it's a widely understood or low-level constant, but PascalCase is more common in this C# codebase for string constants.
+    Example:
+    
+    private const string SessionCountKey = "session_count";
+    public const string FakeDownloadKey = "FakeDownloadOutOfSpace";
+    
+
+12. Rule: Local Variable and Parameter Naming
+    Explanation: Use camelCase for local variables and method parameters.
+    Example:
+    
+    public CoreMvpInstaller(IPresenterBinder presenterBinder, ICommandBinder commandBinder)
+    {
+        var dataRouterService = Container.Resolve<IDataRouterService>();
+    }
+    
+
+13. Rule: Type Suffixes for Common Patterns
+    Explanation: Use common suffixes for classes that follow specific design patterns or serve specific roles to improve discoverability and understanding.
+    *   Installer: 'Installer' (e.g., 'CoreMvpInstaller')
+    *   Factory: 'Factory' (e.g., 'SceneLoaderFactory')
+    *   Model: 'Model' (e.g., 'ErrorModel')
+    *   ViewModel: 'ViewModel' (e.g., 'HotOffersViewModel')
+    *   Service: 'Service' (e.g., 'WebsocketService')
+    *   Presenter: 'Presenter' (e.g., 'DailyLoginPresenter')
+    *   View: 'View' (e.g., 'DailyLoginView')
+    *   Command: 'Command' (e.g., 'OpenCrmCommand')
+    *   Payload: 'Payload' (e.g., 'IOpenCrmPayload')
+    *   Decorator: 'Decorator' (e.g., 'DateTimeDecorator')
+    *   Exception: 'Exception' (e.g., 'DataRouterException')
+
+ Formatting & Spacing
+
+14. Rule: Brace Style
+    Explanation: Opening braces ('{') for types, methods, and control structures (if, else, for, while, switch, try, catch, finally) must be on a new line.
+    Example:
+    
+    public class CoreMvpInstaller : MvpInstaller
+    {
+        protected override void BindCommon()
+        {
+            if (someCondition)
+            {
+                // ...
+            }
+        }
+    }
+    
+
+15. Rule: Indentation
+    Explanation: Use 4 spaces for indentation. Do not use tabs.
+    Example:
+    
+    public class MyClass
+    {
+        public void MyMethod()
+        {
+            // Indented code
+        }
+    }
+    
+
+16. Rule: Spaces Around Operators
+    Explanation: Use a single space around binary operators ('=', '+=', '*', '/', '+', '-', '==', '!=', '<', '>', '&&', '||', '??', etc.) and ternary operators ('? :').
+    Example:
+    
+    var x = y + z;
+    if (a == b && c != d) { /* ... */ }
+    _isInternetReachable.Value = isNetworkReachable;
+    var result = condition ? "true" : "false";
+    
+
+17. Rule: Spaces After Commas and Keywords
+    Explanation: Use a single space after commas in argument/parameter lists and after keywords like 'if', 'for', 'while', 'switch', 'foreach'.
+    Example:
+    
+    public void MyMethod(int param1, string param2) { /* ... */ }
+    if (condition) { /* ... */ }
+    foreach (var item in collection) { /* ... */ }
+    
+
+18. Rule: Spaces in Method Calls and Declarations
+    Explanation: Do not put a space before the opening parenthesis of a method call or declaration.
+    Example:
+    
+    MyMethod(arg1, arg2); // Good
+    public void AnotherMethod() { /* ... */ } // Good
+    
+    Example (Bad):
+    
+    MyMethod (arg1, arg2); // Bad
+    public void AnotherMethod () { /* ... */ } // Bad
+    
+
+19. Rule: Chained Method Calls Formatting
+    Explanation: For long or complex chained method calls (especially Zenject bindings), each subsequent call should be on a new line and indented.
+    Example:
+    
+    Container.Bind<IRandomUtility>()
+        .To<RandomUtility>()
+        .AsSingle();
+    
+
+20. Rule: Attribute Formatting
+    Explanation: Attributes should be placed on a separate line above the declaration they apply to.
+    Example:
+    
+    [SerializeField]
+    private CashmanButton _homeButton;
+
+    [Inject]
+    public MyClass(Dependency dep) { /* ... */ }
+    
+
+21. Rule: Blank Lines
+    Explanation: Use single blank lines to separate logical groups of code, such as between methods, properties, or blocks of statements within a method, to improve readability.
+    Example:
+    
+    public void Method1()
+    {
+        // ...
+    }
+
+    public void Method2()
+    {
+        // ...
+    }
+    
+
+22. Rule: Lambda Expression Spacing
+    Explanation: Use spaces around the lambda arrow ('=>').
+    Example:
+    
+    _dataRouter.Subscribe<IInitData>(_ => analyticsEventService.Initialise());
+    Func<IInitData, IEnumerable<IFeatureFlag>> selector = data => data.Settings.FeatureFlags;
+    
+
+23. Rule: Code Grouping with Regions
+    Explanation: Use '#region' and '#endregion' to group related members within a class, especially in large classes. This is common in Unity scripts for grouping Inspector fields, public methods, private methods, etc.
+    Example:
+    
+    #region Fields
+    private int _count;
+    #endregion
+
+    #region Public Methods
+    public void Increment() { _count++; }
+    #endregion
+    
+
+ Class Design & Structure
+
+24. Rule: Single Responsibility Principle (SRP)
+    Explanation: Each class should have one primary responsibility. For example, separate factories, services, models, presenters, and views.
+    Example: 'AnalyticsEventFactory' is responsible for creating 'IEventData', 'AnalyticsEventService' handles logging events.
+
+25. Rule: Encapsulate Logic and Avoid Code Duplication (DRY)
+    Explanation: If a piece of logic is used in multiple places, encapsulate it in a shared method, extension method, or service. This follows the Don't Repeat Yourself (DRY) principle, making the code easier to maintain and reducing the risk of bugs.
+    Example:
+    
+    // Good: An extension method centralizes the logic.
+    public static class CancellationTokenSourceExtensions
+    {
+        public static void CancelAndDispose(this CancellationTokenSource cts)
+        {
+            cts?.Cancel();
+            cts?.Dispose();
+        }
+    }
+    
+    // Usage:
+    _progressTokenSource.CancelAndDispose();
+    
+
+26. Rule: Dependency Injection (DI)
+    Explanation: Use constructor injection for mandatory dependencies. Zenject is the DI framework. Avoid manual instantiation of dependencies where DI can be used.
+    Example:
+    
+    public CoreMvpInstaller(
+        IPresenterBinder presenterBinder, 
+        ICommandBinder commandBinder) : base(presenterBinder, commandBinder)
+    {
+        // Dependencies are injected
+    }
+    
+
+27. Rule: Zenject Singleton Binding
+    Explanation: Bind services and models intended to be singletons using '.AsSingle()' in Zenject installers. Use '.NonLazy()' for eager instantiation if required.
+    Example:
+    
+    Container.Bind<IRandomUtility>().To<RandomUtility>().AsSingle();
+    Container.Bind<ICashmanNotificationService>().To<CashmanNotificationService>().AsSingle().NonLazy();
+    
+
+28. Rule: Model-View-Presenter (MVP) Pattern
+    Explanation: Structure UI logic using the MVP pattern. Installers ('MvpInstaller') are responsible for binding Models, Views, and Presenters.
+    Example (from 'CrmInstaller'):
+    
+    protected override void BindModels()
+    {
+        Container.BindInterfacesTo<CrmModel>().AsSingle();
+    }
+
+    protected override void BindPresenters(IPresenterBinder presenterBinder)
+    {
+        presenterBinder.BindView<SpecialOfferButtonView>().ToPresenter<SpecialOfferButtonPresenter>();
+    }
+    
+
+29. Rule: Avoid Logic in Views; Prefer Presenters
+    Explanation: Views should be as "dumb" as possible, primarily responsible for displaying data and forwarding user input events to the Presenter. Complex logic, state management, and data manipulation belong in the corresponding Presenter to maintain a clean architecture and improve testability.
+    Example:
+    
+    // In a Presenter (Good)
+    public void OnRewardClaimed(IRewardData reward)
+    {
+        if (_userModel.CanClaim(reward))
+        {
+            _view.ShowSuccessAnimation();
+        }
+        else
+        {
+            _view.ShowError();
+        }
+    }
+    
+    Example (Bad, logic in a View's code-behind):
+    
+    // In a View (Bad)
+    public void ClaimButtonClicked()
+    {
+        var userModel = MyContainer.Resolve<IUserModel>(); // Service location
+        if (userModel.CanClaim(this.rewardData)) // Logic check
+        {
+            this.ShowSuccessAnimation(); // UI update
+        }
+    }
+    
+
+30. Rule: Do Not Overload Models with UI-Specific Data
+    Explanation: Models should represent the core data and business logic of a feature, independent of the UI. Avoid storing UI-specific state (like 'IsUiBlocked' or banner display offsets) in the data Model. Such state belongs in a ViewModel or the Presenter.
+    Example (in GameModel):
+    
+    // Good: Model contains only core game data
+    public int CurrentBet { get; set; }
+    public bool IsFeatureActive { get; set; }
+    
+    Example (Bad):
+    
+    // Bad: Model is polluted with UI state
+    public int CurrentBet { get; set; }
+    public bool IsFeatureActive { get; set; }
+    public float TopBannerVerticalOffset { get; set; } // UI-specific
+    
+
+31. Rule: Interface-Based Design
+    Explanation: Program to interfaces, not implementations, especially for services, models, and major components. This promotes loose coupling and testability.
+    Example:
+    
+    Container.Bind<IDateTime>().To<DateTimeDecorator>().AsSingle();
+    // DateTimeDecorator implements IDateTime
+    
+
+32. Rule: Readonly Fields for Dependencies
+    Explanation: Mark injected dependencies and fields initialized only in the constructor as 'readonly' to ensure immutability after construction.
+    Example:
+    
+    public class AnalyticsEventServiceFactory : IServiceFactory<IAnalyticsEventService>
+    {
+        private readonly IDeviceDataProvider _deviceData; // readonly
+        public AnalyticsEventServiceFactory(IDeviceDataProvider deviceData)
+        {
+            _deviceData = deviceData;
+        }
+    }
+    
+
+33. Rule: 'IDisposable' and 'IInitializable'
+    Explanation: Implement 'IDisposable' for classes that manage unmanaged resources or subscribe to events, ensuring cleanup in the 'Dispose' method. Implement 'IInitializable' for classes requiring an explicit setup step after DI has resolved dependencies.
+    Example (IDisposable):
+    
+    public class MyPresenter : IDisposable
+    {
+        public void Dispose()
+        {
+            _view.OnButtonClicked -= OnViewButtonClicked;
+        }
+    }
+    
+
+34. Rule: Constants and Configuration
+    Explanation: Store configuration keys, magic strings, and URLs as constants or in configuration classes/files rather than hardcoding them directly in business logic.
+    Example:
+    
+    private const string SessionCountKey = "session_count";
+    public const string FakeDownloadKey = "FakeDownloadOutOfSpace";
+    
+
+35. Rule: Access Modifiers
+    Explanation: Use the most restrictive access modifier that makes sense (private, protected, internal, public). Default to private.
+    Example: Many helper methods in installers are 'private'. Injected fields are often 'private readonly'.
+
+36. Rule: Order Class Members According to Convention
+    Explanation: Follow a consistent order for class members to make classes easier to navigate. A common convention is: constants, public/serialized fields, private fields, constructor, public properties, public methods, private methods, and finally Unity lifecycle methods ('OnDestroy') or 'Dispose'.
+    Example:
+    
+    public class MyPresenter : IDisposable
+    {
+        // Fields
+        [SerializeField] private Button _myButton;
+        private readonly IMyService _myService;
+
+        // Constructor
+        public MyPresenter(IMyService myService) { /* ... */ }
+
+        // Public Methods
+        public void Initialize() { /* ... */ }
+
+        // Private Methods
+        private void HandleClick() { /* ... */ }
+
+        // Dispose / Lifecycle
+        public void Dispose() { /* ... */ }
+    }
+    
+
+37. Rule: Carefully Consider the Need for New Classes
+    Explanation: Before creating a new class, evaluate if its functionality could be housed within an existing, related class. A new class with only one method and one usage might be an indication of over-engineering and can often be simplified to a private method in the calling class.
+
+ Method Design
+
+38. Rule: Method Conciseness
+    Explanation: Methods should be short and do one thing well. If a method is too long or complex, break it down into smaller, private helper methods.
+    Example:
+    
+    protected override void BindCommon()
+    {
+        AddFeatureInstallers(); // Helper method
+        BindCoreServices();     // Helper method
+        BindWatchers();         // Helper method
+    }
+    
+
+39. Rule: Cache Frequently Accessed Values
+    Explanation: Avoid repeatedly calling methods or accessing properties that perform computations if the value doesn't change within the method's scope. Cache the result in a local variable to improve performance and readability.
+    Example:
+    
+    // Good
+    public void UpdateButtonState()
+    {
+        var isEligible = _playerModel.IsEligibleToPlay(); // Called once, cached
+        _playButton.interactable = isEligible;
+        _featureIcon.SetActive(isEligible);
+    }
+    
+    Example (Bad):
+    
+    // Bad
+    public void UpdateButtonState()
+    {
+        _playButton.interactable = _playerModel.IsEligibleToPlay(); // Called twice
+        _featureIcon.SetActive(_playerModel.IsEligibleToPlay());
+    }
+    
+
+ Error Handling & Exceptions
+
+40. Rule: Use 'when' Clauses for Exception Filtering
+    Explanation: Use C#'s 'when' clause on a 'catch' block to handle exceptions conditionally without fully catching and re-throwing them. This is cleaner, preserves the original stack trace, and is ideal for ignoring specific, expected exceptions like 'OperationCanceledException'.
+    Example:
+    
+    try
+    {
+        await SomeCancellableOperation(_cancellationToken);
+    }
+    catch (Exception ex) when (ex is not OperationCanceledException)
+    {
+        Log.Error(this, "An unexpected error occurred.", ex);
+    }
+    
+
+41. Rule: Specific Custom Exceptions
+    Explanation: Define and use custom exceptions for domain-specific errors where appropriate. This allows for more granular error handling.
+    Example:
+    
+    public class DataRouterException : Exception { /* ... */ }
+    throw new DataRouterException("Route not found for type IMyData.");
+    
+
+42. Rule: Graceful Handling of External Calls
+    Explanation: Wrap calls to external services or operations prone to failure (I/O, network) in 'try-catch' blocks or use promise/UniTask '.Fail()' handlers.
+    Example:
+    
+    try
+    {
+        endDateTime = serverTime.Now.Add(timeSpan);
+    }
+    catch (Exception e)
+    {
+        endDateTime = serverTime.Now; // Fallback
+    }
+    
+
+43. Rule: Error Model for User-Facing Errors
+    Explanation: Use a centralized error model (like 'IErrorModel') to queue and manage user-facing errors, allowing the UI to display them appropriately without direct coupling.
+    Example:
+    
+    _errorModel.Post(AssetError.DeviceStorageFull.WithCallBack(/*...*/));
+    
+
+44. Rule: Ensure Error Popups are Not Displayed Twice
+    Explanation: In a sequence of operations where multiple steps can fail, ensure that only one error popup is shown to the user. A failure in an early step should prevent subsequent steps from executing and showing their own error messages.
+    Example:
+    
+    // Using a command chain that aborts on failure
+    LoadCatalogCommand()
+        .Then(ValidateDataCommand) // This won't run if LoadCatalog fails
+        .Then(ShowUICommand)
+        .Fail(error => ShowSingleErrorPopup(error)); // Single failure point
+    
+
+45. Rule: Centralize Error Mapping and Handling
+    Explanation: Avoid handling specific error strings or codes directly in UI-level classes like Presenters. Use a centralized 'ErrorMapper' service to translate raw errors from services or backends into user-friendly messages or actions. This promotes separation of concerns and simplifies mantenance.
+    Example (in a Presenter):
+    
+    // Bad: Presenter knows about specific error code
+    if (error.Code == "INSUFFICIENT_FUNDS") { _view.ShowOutOfCoinsPopup(); }
+    
+    Example (Good):
+    
+    // Good: Presenter delegates to a mapper
+    private void OnPurchaseFailed(PurchaseError error)
+    {
+        var mappedAction = _errorMapper.GetActionForError(error);
+        mappedAction.Execute(); // The action might show a popup, etc.
+    }
+    
+
+ Logging
+
+46. Rule: Contextual Logging
+    Explanation: Provide context (e.g., class instance 'this' or a specific tag string) in log messages to make it easier to trace log origins.
+    Example:
+    
+    Log.Info((object)this, "{0}. {1}", new object[2] { logName, message });
+    
+
+47. Rule: Structured Log Messages
+    Explanation: Use string formatting for log messages instead of concatenation to improve readability and performance.
+    Example:
+    
+    Log.Info(this, "Value is {0}, Status is {1}", myValue, status);
+    
+    Example (Bad):
+    
+    Log.Info(this, "Value is " + myValue + ", Status is " + status);
+    
+
+48. Rule: Use Appropriate Log Levels
+    Explanation: Use different log levels (Debug, Info, Warn, Error, Exception) according to the severity and purpose of the message.
+
+49. Rule: NewRelic Integration for Important Events and Errors
+    Explanation: Log critical events, errors, and performance metrics to NewRelic for production monitoring.
+    Example:
+    
+    _newRelicService.RecordExceptionEvent(ex.Message, ex.StackTrace);
+    _newRelicService.StartInteraction(...);
+    
+
+ Asynchronous Programming
+
+50. Rule: Prefer 'UniTask' for Asynchronous Operations
+    Explanation: Use 'UniTask' for asynchronous programming in Unity projects due to its performance benefits and better integration with Unity's lifecycle.
+    Example:
+    
+    public class OpenPreviousLocationCommand : UniTaskCommand, IOpenPreviousLocationCommand
+    {
+        protected override async UniTask Execute() { /* ... */ }
+    }
+    
+
+51. Rule: Use 'async/await' for Readability
+    Explanation: Employ 'async/await' with 'UniTask' to write asynchronous code that resembles synchronous code, improving readability and maintainability.
+    Example:
+    
+    // Good
+    protected override async UniTask Execute()
+    {
+        await OpenLocation();
+        ClearLocationInfo();
+    }
+    
+    Example (Less Readable):
+    
+    // Bad
+    protected override UniTask Execute()
+    {
+        return OpenLocation().ContinueWith(() => ClearLocationInfo());
+    }
+    
+
+52. Rule: CancellationToken for Cancellable Operations
+    Explanation: Pass 'CancellationToken' to long-running or potentially cancellable asynchronous operations to allow them to be stopped prematurely.
+    Example:
+    
+    public UniTask AddTimeout(Action method, TimeSpan timeSpan, CancellationToken token)
+    {
+        return UniTask.Delay(timeSpan, cancellationToken: token).ContinueWith(() => method?.Invoke());
+    }
+    
+
+53. Rule: Handle Promise/UniTask Completion and Errors
+    Explanation: Always handle both successful completion (e.g., '.Then()', 'await') and failure (e.g., '.Fail()', 'try-catch') of asynchronous operations.
+    Example:
+    
+    _gameTileAssetService.LoadSlotBundle(_gameTile)
+        .Then(OnDownLoadTileComplete) // Success
+        .Fail(OnDownloadFailed); // Failure
+    
+    
+54. Rule: Properly Dispose of 'CancellationTokenSource' Objects
+    Explanation: A 'CancellationTokenSource' is a disposable object that must be disposed of when it's no longer needed to free up its underlying resources. Often, a CTS is linked to an object's lifecycle and should be disposed in 'Dispose()' or 'OnDestroy()'.
+    Example:
+    
+    public class MyViewPresenter : IDisposable
+    {
+        private CancellationTokenSource _cts;
+
+        public void OnShow()
+        {
+            _cts = new CancellationTokenSource();
+            AnimateIn(_cts.Token).Forget();
+        }
+
+        public void Dispose()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
+        }
+    }
+    
+
+ Resource & Memory Management
+
+55. Rule: Always Unsubscribe from Events
+    Explanation: To prevent memory leaks, any object that subscribes to an event must unsubscribe when it is no longer needed, typically in 'OnDestroy()' (for MonoBehaviours) or 'Dispose()' (for POCOs).
+    Example:
+    
+    public void Dispose()
+    {
+        _webSocketService.OnStateChanged -= OnWebSocketStatusChanged;
+        _view.OnButtonClicked -= OnViewButtonClicked;
+    }
+    
+
+56. Rule: Avoid Unloading and Immediately Reloading Assets
+    Explanation: Review asset loading and unloading logic to ensure it's efficient. Unloading a bundle or asset only to request it again immediately in a subsequent step is redundant and causes performance overhead from unnecessary disk I/O and processing.
+
+ Unity Specifics
+
+57. Rule: Zenject Installers for DI Configuration
+    Explanation: Use Zenject Installers ('Installer' or 'MvpInstaller' base classes) to configure dependency injection bindings within a specific context.
+    Example: 'CoreMvpInstaller', 'CrmInstaller'.
+
+58. Rule: Use 'ICoroutineRunner' for DI-Managed Coroutines
+    Explanation: If a non-MonoBehaviour class needs to run Unity coroutines, inject 'ICoroutineRunner' and use it.
+
+59. Rule: Initialize GameObjects Before Activation to Prevent Flickering
+    Explanation: To provide a smooth user experience, set a GameObject's visual properties (like an Image's sprite or a Text's content) *before* activating its 'gameObject'. Activating it and then changing its properties in a subsequent line of code can cause a noticeable flicker for one frame.
+    Example:
+    
+    // Good
+    _myIcon.sprite = newSprite;
+    _myIcon.gameObject.SetActive(true);
+    
+    Example (Bad):
+    
+    // Bad: can cause a flicker if old sprite is visible for a frame
+    _myIcon.gameObject.SetActive(true);
+    _myIcon.sprite = newSprite;
+    
+
+60. Rule: Optimize Texture Memory Usage
+    Explanation: Be mindful of texture settings to reduce memory footprint. Disable "Read/Write" on textures unless required for script access. Disable "Generate Mip Maps" for UI sprites that are not scaled down significantly. Use appropriate, platform-specific compression formats (e.g., ASTC).
+
+61. Rule: '[SerializeField]' for Inspector Fields
+    Explanation: Use '[SerializeField]' to expose private fields to the Unity Inspector, maintaining encapsulation.
+    Example:
+    
+    [SerializeField]
+    private CashmanButton _submitButton;
+    
+62. Rule: '[CanBeNullField]' for Optional Serialized Fields
+    Explanation: Use '[CanBeNullField]' attribute to indicate that a '[SerializeField]' field can intentionally be left null in the Inspector without causing a warning or error, if the code handles its nullability.
+    Example:
+    
+    [SerializeField, CanBeNullField]
+    private TimerLabel _timerLabel;
+    
+    
+63. Rule: '[LocalisationString]' Attribute for Localizable Strings
+    Explanation: Use the '[LocalisationString]' attribute for string fields in views or other components that represent keys for localized text. This aids in identifying and managing localizable content.
+    Example:
+    
+    [SerializeField, LocalisationString]
+    private string _messageKey;
+    
+
+64. Rule: Platform-Specific Code Encapsulation
+    Explanation: Use preprocessor directives ('#if', '#elif', '#else', '#endif') to encapsulate platform-specific code. Ensure all execution paths are covered.
+    Example:
+    
+    #if UNITY_EDITOR
+        Container.BindInterfacesTo<EditorDiskUtility>().AsSingle();
+    #else
+        Container.BindInterfacesTo<DiskUtility>().AsSingle();
+    #endif
+    
+
+ Comments & Documentation
+
+65. Rule: XML Documentation Comments for Public API
+    Explanation: Write XML documentation comments ('/// <summary>...') for all public and protected types and members to explain their purpose, parameters, and return values. This is a requirement for all public interfaces.
+    Example:
+    
+    public interface IDiskUsage
+    {
+        /// <summary>
+        /// Gets a value indicating whether the current screen orientation is portrait.
+        /// </summary>
+        bool IsCurrentlyPortrait { get; }
+    }
+    
+
+66. Rule: '//TODO:' Comments for Pending Work
+    Explanation: Use '//TODO:' comments to mark areas of the code that require future attention or completion.
+    Example:
+    
+    //TODO: Refactor this to use the new service once it's available.
+    
+
+67. Rule: Explain Complex or Non-Obvious Code
+    Explanation: Add standard comments ('//') to clarify complex algorithms, workarounds, or non-obvious design choices.
+    Example:
+    
+    // We must flush the buffer here before sending the next packet
+    // due to a limitation in the 3rd party library.
+    _networkStream.Flush();
+    
+    
+68. Rule: Remove Unnecessary or Obsolete Code and Comments
+    Explanation: Keep the codebase clean by removing commented-out code, unused variables, and outdated comments. This prevents confusion and reduces cognitive overhead for developers.
+
+ Testing
+
+69. Rule: Write Comprehensive Tests for New Logic and Bug Fixes
+    Explanation: All new features and bug fixes must be accompanied by relevant unit or integration tests. This ensures correctness, prevents regressions, and serves as living documentation. When fixing a bug, write a test that fails by reproducing the bug, and then passes with the fix.
+    Example (hiding expected errors in tests):
+    
+    // Use LogAssert to verify an expected error is logged without failing the test
+    LogAssert.Expect(LogType.Error, "Expected error message");
+    _myService.DoSomethingThatShouldFail();
+    
+
+ General Best Practices
+
+70. Rule: Use 'var' for Obvious Type Declarations
+    Explanation: When the type of a variable is clearly identifiable from the right-hand side of the assignment, use the 'var' keyword to improve readability and reduce verbosity. Do not use it when the type is not obvious (e.g., 'var result = _service.GetValue()').
+    Example:
+    
+    // Good: Type is obvious
+    var presenter = new MyPresenter();
+    var names = new List<string>();
+    
+    Example (Bad):
+    
+    // Bad: Type should be explicit for clarity
+    IPlayerState result = _stateProvider.GetInitialState(); 
+    // var result = _stateProvider.GetInitialState(); // <-- Less clear
+    
+
+71. Rule: Use 'string.IsNullOrEmpty()' or 'IsNullOrWhiteSpace()'
+    Explanation: Instead of checking for 'myString == "" || myString == null', use the more robust and readable built-in methods 'string.IsNullOrEmpty()' or 'string.IsNullOrWhiteSpace()'.
+    Example:
+    
+    if (string.IsNullOrEmpty(userName))
+    {
+        // Handle invalid user name
+    }
+    
+
+72. Rule: Utilize Strong Typing and Generics
+    Explanation: Whenever possible, use generic type parameters ('<T>') instead of passing 'System.Object'. This improves type safety at compile time, reduces the need for runtime casts, and makes the code more self-documenting.
+    Example:
+    
+    // Good: Uses generic type for type safety
+    public async UniTask<T> LoadAsset<T>(string assetUrl) where T : UnityEngine.Object
+    {
+        return await _assetService.LoadAsset<T>(assetUrl, _cancellationToken);
+    }
+    
+    Example (Bad):
+    
+    // Bad: Relies on object and runtime casting
+    public async UniTask<Object> LoadAsset(string assetUrl)
+    {
+        return await _assetService.LoadAsset<Object>(assetUrl, _cancellationToken);
+    }
+    // Caller must then cast: var myPrefab = (GameObject)loadedAsset;
+    
+    
+73. Rule: Use 'nameof()' for String Representations of Symbols
+    Explanation: When referring to the name of a type, method, or parameter as a string (e.g., for logging or exceptions), use 'nameof()' to avoid magic strings and ensure refactor-safety.
+    Example:
+    
+    if (target == null)
+    {
+        throw new ArgumentNullException(nameof(target), "Crm target can't be null");
+    }
+    
+
+74. Rule: LINQ for Collection Manipulation
+    Explanation: Utilize LINQ for querying and manipulating collections where it improves readability, but be mindful of performance implications in hot paths (e.g., 'Update' loops).
+    Example:
+    
+    var eligibleProducts = catalogProducts
+        .Where(product => product.IsAvailable)
+        .ToList();
+    
+
+75. Rule: Favor 'IEnumerable<T>' or 'IReadOnlyList<T>' for Public Collections
+    Explanation: When exposing collections through properties or returning them from methods, prefer 'IEnumerable<T>' or 'IReadOnlyList<T>' if the collection is not meant to be modified by the consumer. This promotes immutability.
+    Example:
+    
+    public IEnumerable<ITileData> AllTiles { get; private set; }
+    
+
+76. Rule: Use 'this' Qualifier Sparingly
+    Explanation: Omit the 'this.' qualifier for accessing instance members unless it's necessary to disambiguate between an instance member and a local variable or parameter with the same name.
+    Example (Good, no conflict):
+    
+    _queue.Clear(); // Accessing instance field _queue
+    
+    Example (Necessary):
+    
+    public MyClass(IPresenterBinder presenterBinder)
+    {
+        this.presenterBinder = presenterBinder; // Disambiguates field from parameter
+    }
+    
+
+77. Rule: '[InjectOptional]' for Optional Dependencies
+    Explanation: Use the '[InjectOptional]' attribute when a dependency might not be bound in all contexts and the class can function (perhaps with reduced capability) without it. The injected field will be null if the dependency is not found.
+    Example:
+    
+    public SpinnerPopupPresenter(ISpinnerPopupView view, 
+        [InjectOptional] ISpinnerPopupPayload payload) : base(view) 
+    { 
+        if (payload != null) { /* ... */ }
+    }
+    
