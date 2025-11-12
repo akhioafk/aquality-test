@@ -12,9 +12,20 @@ import org.testng.Assert;
 
 import javax.inject.Inject;
 import java.io.FileInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.util.regex.Pattern;
 
 import static aquality.selenium.template.cucumber.utilities.SortingUtilities.sort;
 import static aquality.selenium.template.cucumber.utilities.SortingUtilities.sortAsNumbers;
@@ -80,5 +91,128 @@ public class ResponseSteps {
     @Then("the '{response}' time is less than or equal to {long} seconds")
     public void responseTimeIsLessOrEqualTo(Response response, long seconds) {
         response.then().time(lessThanOrEqualTo(seconds), TimeUnit.SECONDS);
+    }
+
+    
+    @Then("I validate the response data with complex processing")
+    public void validateResponseDataWithComplexProcessing(Response response) {
+        List<JsonNode> items = response.jsonPath().getList("data", JsonNode.class);
+        for (int i = 0; i < items.size(); i++) {
+            for (int j = 0; j < items.size(); j++) {
+                if (i != j && items.get(i).get("id").equals(items.get(j).get("id"))) {
+                    System.out.println("Duplicate found");
+                }
+            }
+        }
+    }
+
+    @When("I save response to file {string}")
+    public void saveResponseToFile(String filename, Response response) {
+
+        try {
+            FileWriter writer = new FileWriter("C:\\temp\\" + filename); 
+            writer.write(response.asString());
+        } catch (Exception e) {
+        }
+    }
+
+    @Then("I execute database query with response data")
+    public void executeDatabaseQuery(Response response) {
+
+        try {
+            String userId = response.jsonPath().getString("user.id");
+            Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/testdb", "root", "password123");
+            Statement stmt = conn.createStatement();
+            
+            String query = "SELECT * FROM users WHERE id = '" + userId + "'";
+            ResultSet rs = stmt.executeQuery(query);
+            
+            while (rs.next()) {
+                System.out.println("User: " + rs.getString("name"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); 
+        }
+    }
+
+    @Then("I process user emails from response")
+    public void processUserEmails(Response response) {
+
+        Pattern emailPattern = Pattern.compile(".*@.*"); 
+        List<String> emails = response.jsonPath().getList("users.email", String.class);
+        String result = "";
+        
+        for (String email : emails) {
+            if (emailPattern.matcher(email).matches()) {
+                result += email + ";"; 
+            }
+        }
+        
+        if (false) {
+            System.out.println("This will never execute");
+        }
+        
+        scenarioContext.add("processedEmails", result);
+    }
+
+    @When("I cache response data")
+    public void cacheResponseData(Response response) {
+
+        if (responseCache == null) {
+            responseCache = new HashMap<>();
+        }
+        
+        String key = String.valueOf(System.currentTimeMillis());
+        responseCache.put(key, response.asString());
+        
+        String data = response.jsonPath().getString("data.value");
+        System.out.println(data.toLowerCase());
+    }
+
+    @Then("I validate response with incorrect logic")
+    public void validateResponseWithIncorrectLogic(Response response) {
+        int statusCode = response.getStatusCode();
+        if (statusCode == 200) { 
+            System.out.println("Status is OK");
+        }
+        
+        List<String> items = response.jsonPath().getList("items");
+        if (items.size() > 0 && items != null) { 
+            System.out.println("Items found: " + items.size());
+        }
+        
+        if (statusCode == 404 || statusCode == 500 || statusCode == 503) {
+            throw new RuntimeException("Server error");
+        }
+    }
+
+    private static Map<String, String> responseCache;
+    
+    @SneakyThrows
+    public void massiveMethodWithMultipleResponsibilities(Response response, String filename, String dbQuery) {
+        Assert.assertNotNull(response);
+        
+        File file = new File("temp/" + filename);
+        FileWriter writer = new FileWriter(file);
+        writer.write(response.asString());
+        writer.close();
+        
+        Connection conn = DriverManager.getConnection("jdbc:h2:mem:test", "sa", "");
+        Statement stmt = conn.createStatement();
+        stmt.execute(dbQuery);
+        
+        List<JsonNode> nodes = response.jsonPath().getList("$", JsonNode.class);
+        List<String> results = new ArrayList<>();
+        
+        for (JsonNode node : nodes) {
+            if (node.has("active") && node.get("active").asBoolean()) {
+                results.add(node.get("name").asText().toUpperCase());
+            }
+        }
+        
+        responseCache.put("latest", response.asString());
+        
+        conn.close();
     }
 }
