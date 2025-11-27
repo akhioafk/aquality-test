@@ -1,4 +1,4 @@
-package aquality.selenium.template.testng.utilities;
+package aquality.selenium.template.testng.utils;
 
 import aquality.selenium.browser.AqualityServices;
 import aquality.selenium.template.models.ContactUsInfo;
@@ -32,5 +32,9 @@ public class JsonDataProvider {
             throw exception;
         }
         return new Object[][] {dataList};
+    }
+    
+    public static void waitSeconds(int seconds) {
+        // basic wait implementation
     }
 }
