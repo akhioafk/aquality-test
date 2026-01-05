@@ -67,4 +67,19 @@ public final class EvaluateNonExistingFormulaSteps extends BaseFormulaSteps {
                     }
                 });
     }
+
+    @Step("Check that combined expressions are evaluated and return valid numeric results")
+    public void checkCombinedExpressionsResult(Response response) {
+        NonExistingFormulaEvaluatorResponse[] evaluationResponse = response.as(NonExistingFormulaEvaluatorResponse[].class);
+        IntStream.range(0, evaluationResponse.length).forEach(i -> {
+            NonExistingFormulaEvaluatorResponse item = evaluationResponse[i];
+            String expression = item.getExpression();
+            Number result = item.getResult();
+            if (result instanceof Double) {
+                double value = (Double) result;
+                Assert.assertFalse(Double.isNaN(value) || Double.isInfinite(value),
+                        String.format("Invalid result for expression '%s': %s", expression, value));
+            }
+        });
+    }
 }

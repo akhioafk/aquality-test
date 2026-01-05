@@ -1,5 +1,6 @@
 package com.alabs.automation.phoenix.tests.formulaservice.formula;
 
+import com.alabs.automation.phoenix.constants.formulaservice.FormulaCombinedExpressions;
 import com.alabs.automation.phoenix.data.formula.NonExistingFormulaEvaluatorExpressionGenerator;
 import com.alabs.automation.framework.steps.api.ResponseSteps;
 import com.alabs.automation.phoenix.data.common.InvalidAuthHeadersDataProvider;
@@ -56,5 +57,33 @@ public class EvaluateNonExistingFormulaTest extends BaseFormulasTest {
                 invalidAuthRequestSpecification,
                 NonExistingFormulaEvaluatorExpressionGenerator.prepareEvaluatorWithValidExpressions(gameAccountId));
         ResponseSteps.checkStatusCode(response, SC_UNAUTHORIZED);
+    }
+
+    @Test(description = "Verify that a formula is evaluated when using combined operators and functions in the expression",
+            priority = Integer.MAX_VALUE-1, groups = {"suite.smoke"})
+    public void evaluateFormulaWithCombinedOperatorsAndFunctions() {
+        Response response = evaluateNonExistingFormulaSteps.evaluateFormula(
+                NonExistingFormulaEvaluatorExpressionGenerator.prepareEvaluatorWithCombinedExpressions(gameAccountId, FormulaCombinedExpressions.combinedExpressions));
+
+        ResponseSteps.checkStatusCode(response, SC_OK);
+        evaluateNonExistingFormulaSteps.checkCombinedExpressionsResult(response);
+    }
+
+    @Test(description = "Send POST /admin/v1/formulas/evaluate call with maths functions and attributes")
+    public void evaluateFormulaWithMathFunctionsAndAttributes() {
+        Response response = evaluateNonExistingFormulaSteps.evaluateFormula(
+                NonExistingFormulaEvaluatorExpressionGenerator.prepareEvaluatorWithCombinedExpressions(gameAccountId, FormulaCombinedExpressions.mathExpressions));
+
+        ResponseSteps.checkStatusCode(response, SC_OK);
+        evaluateNonExistingFormulaSteps.checkCombinedExpressionsResult(response);
+    }
+
+    @Test(description = "Send POST /admin/v1/formulas/evaluate call with logical functions and operators")
+    public void evaluateFormulaWithLogicFunctionsAndOperators() {
+        Response response = evaluateNonExistingFormulaSteps.evaluateFormula(
+                NonExistingFormulaEvaluatorExpressionGenerator.prepareEvaluatorWithCombinedExpressions(gameAccountId, FormulaCombinedExpressions.logicExpressions));
+
+        ResponseSteps.checkStatusCode(response, SC_OK);
+        evaluateNonExistingFormulaSteps.checkCombinedExpressionsResult(response);
     }
 }
