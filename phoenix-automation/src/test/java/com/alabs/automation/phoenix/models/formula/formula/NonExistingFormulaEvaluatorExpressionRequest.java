@@ -2,6 +2,7 @@ package com.alabs.automation.phoenix.models.formula.formula;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.alabs.automation.phoenix.models.formula.snapshot.FormulaSnapshotAttributes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class NonExistingFormulaEvaluatorExpressionRequest {
     private String gameAccountId;
     private String[] expressions;
+    private FormulaSnapshotAttributes additionalAttributes;
 }

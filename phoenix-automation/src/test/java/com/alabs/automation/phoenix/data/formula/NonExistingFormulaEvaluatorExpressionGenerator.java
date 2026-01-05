@@ -3,6 +3,7 @@ package com.alabs.automation.phoenix.data.formula;
 import com.alabs.automation.framework.utilities.Randomizer;
 import com.alabs.automation.phoenix.constants.formulaservice.FormulaGenerationConstants;
 import com.alabs.automation.phoenix.models.formula.formula.NonExistingFormulaEvaluatorExpressionRequest;
+import com.alabs.automation.phoenix.models.formula.snapshot.FormulaSnapshotAttributes;
 import lombok.experimental.UtilityClass;
 
 import java.util.Arrays;
@@ -35,7 +36,22 @@ public class NonExistingFormulaEvaluatorExpressionGenerator {
         return prepareEvaluatorExpression(gameAccountId, INVALID_EXPRESSION, FormulaType.ADD_ONE_HUNDRED.getValue(VALUE));
     }
 
-    public static NonExistingFormulaEvaluatorExpressionRequest prepareEvaluatorExpression(String gameAccountId, String... expressions) {
-        return NonExistingFormulaEvaluatorExpressionRequest.builder().gameAccountId(gameAccountId).expressions(expressions).build();
+    public static NonExistingFormulaEvaluatorExpressionRequest prepareEvaluatorWithCombinedExpressions(String gameAccountId, String[] combinedExpressions) {
+        return NonExistingFormulaEvaluatorExpressionRequest.builder()
+                .gameAccountId(gameAccountId)
+                .expressions(combinedExpressions)
+                .additionalAttributes(prepareAttributes())
+                .build();
+    }
+
+    private static NonExistingFormulaEvaluatorExpressionRequest prepareEvaluatorExpression(String gameAccountId, String... expressions) {
+        return NonExistingFormulaEvaluatorExpressionRequest.builder()
+                .gameAccountId(gameAccountId)
+                .expressions(expressions)
+                .build();
+    }
+
+    private static FormulaSnapshotAttributes prepareAttributes() {
+        return FormulaSnapshotAttributes.builder().testAttribute(Randomizer.randomNegativeInt()).build();
     }
 }
