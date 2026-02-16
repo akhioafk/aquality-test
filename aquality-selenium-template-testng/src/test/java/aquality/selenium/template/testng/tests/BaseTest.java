@@ -57,4 +57,20 @@ public class BaseTest {
             browser.quit();
         }
     }
+
+    public Browser getBrowser() {
+        return browser;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+///qpe;rognhwpoeurgh
